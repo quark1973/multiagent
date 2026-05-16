@@ -1,0 +1,53 @@
+syntax = "v1"
+
+info (
+	title:  "OnCallAgent go-zero API"
+	desc:   "OnCall Agent HTTP and Feishu bot entrypoints"
+	author: "github.com/quark1973/multiagent"
+)
+
+type ChatReq {
+	Id       string `json:"id"`
+	Question string `json:"question"`
+}
+
+type ChatRes {
+	Answer string `json:"answer"`
+}
+
+type ChatStreamReq {
+	Id       string `json:"id"`
+	Question string `json:"question"`
+}
+
+type FileUploadRes {
+	FileName string `json:"fileName"`
+	FilePath string `json:"filePath"`
+	FileSize int64  `json:"fileSize"`
+}
+
+type AIOpsRes {
+	Result string   `json:"result"`
+	Detail []string `json:"detail"`
+}
+
+@server (
+	prefix: /api
+)
+service oncall-api {
+	@handler ChatHandler
+	post /chat (ChatReq) returns (ChatRes)
+
+	@handler ChatStreamHandler
+	post /chat_stream (ChatStreamReq)
+
+	@handler UploadHandler
+	post /upload returns (FileUploadRes)
+
+	@handler AIOpsHandler
+	post /ai_ops returns (AIOpsRes)
+
+	@handler FeishuEventHandler
+	post /feishu/event
+}
+
